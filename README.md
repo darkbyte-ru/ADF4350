@@ -19,6 +19,8 @@ void setup()
 }
 
 
+Full example code can be found in example directory. adf4350-advanced example need to be connected 2x16 LCD display via i2c adapter (pcf8574 for example) and rotary encoder with push button. Also that example read heating status of FE-5680A rubidium frequency standard. Remove HEAT_PIN if you using other reference frequency source.
+
 ### Important note
 
 The ADF4350 works with 3.3V logic levels, not 5V. Be careful if you're using an Arduino Uno or similar!
