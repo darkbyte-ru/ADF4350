@@ -6,17 +6,17 @@ Communication library to interface with Analog Devices ADF4350 PLL IC.
 
 In your Arduino sketch, you'll want to include the SPI library in addition to this code:
 
-#include <SPI.h>
-#include <ADF4350.h>
-
-#define PLL_LE_PIN 8
-ADF4350 PLL(PLL_LE_PIN);
-
-void setup()
-{
-  //init ADF4350 with 10MHz reference and tune to 432MHz
-  PLL.initialize(432000, 10);
-}
+    #include <SPI.h>
+    #include <ADF4350.h>
+    
+    #define PLL_LE_PIN 8
+    ADF4350 PLL(PLL_LE_PIN);
+    
+    void setup()
+    {
+      //init ADF4350 with 10MHz reference and tune to 432MHz
+      PLL.initialize(432000, 10);
+    }
 
 
 Full example code can be found in example directory. adf4350-advanced example need to be connected 2x16 LCD display via i2c adapter (pcf8574 for example) and rotary encoder with push button. Also that example read heating status of FE-5680A rubidium frequency standard. Remove HEAT_PIN if you using other reference frequency source.
