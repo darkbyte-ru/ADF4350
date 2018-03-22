@@ -5,22 +5,22 @@ ADF4350 PLL(PLL_LE_PIN);
 
 #include <Wire.h>
 #include <LiquidCrystal_I2C.h>
+//i2c address and pin config for pcf8574 board, maybe differ
 LiquidCrystal_I2C lcd(0x20, 4, 5, 6, 0, 1, 2, 3, 7, NEGATIVE);
 
 #include <Encoder.h>
-Encoder myEnc(3, 2);
+Encoder encoder(3, 2); //pins with interrupt support prefer
 long oldPosition  = 0;
 #define ENCODER_SW_PIN 5
-#define ENCODER_CLICK_STEP 4.0
+#define ENCODER_CLICK_STEP 4.0 //steps between fixed position of encoder
 
-#define LOCK_PIN 4
-#define HEAT_PIN 6
+#define LOCK_PIN 4 //lock status from ADF4350 via MUXOUT pin
+#define HEAT_PIN 6 //heat status from FE-5680A rubidium frequency standard
 bool pll_lock = false;
 bool rubid_heating = false;
 
 #include <avr/eeprom.h>
-unsigned long freq;
-#define EEPROM_WRITE_TIMEOUT 60000UL
+#define EEPROM_WRITE_TIMEOUT 60000UL //save current config to EEPROM after 60 sec of last change
 #define EEPROM_ADDR_FREQ 0
 #define EEPROM_ADDR_CURPOS 5
 #define EEPROM_ADDR_POWER 6
@@ -36,6 +36,7 @@ unsigned long eeprom_write_timeout = 0;
 #define CURSOR_POS_MIN 0
 #define CURSOR_POS_MAX 7
 
+unsigned long freq;
 bool encode_sw_state;
 unsigned long encode_debounce = 0;
 bool cursor_blinking = false;
@@ -50,7 +51,9 @@ void setup()
   lcd.backlight();
   lcd.home();
   lcd.print("Hello, world!");
-  lcd.cursor();
+
+  //spike for ADF4350 cold start
+  delay(5000);
 
   freq = eeprom_read_dword(EEPROM_ADDR_FREQ);
   if (freq >= PLL_FREQ_MIN && freq <= PLL_FREQ_MAX) {
@@ -74,11 +77,12 @@ void setup()
   digitalWrite(ENCODER_SW_PIN, HIGH);
 
   printLCD();
+  lcd.cursor();
 }
 
 void printLCD()
 {
-  //long operation with lcd blink
+  //long operation with screen blink
   //lcd.clear();
 
   //split 123456 to 123.456
@@ -138,6 +142,7 @@ void loop()
 {
   if(rubid_heating != digitalRead(HEAT_PIN)){
     rubid_heating = !rubid_heating;
+    PLL.update(); //for sure about that
     printLCD();
   }
   
@@ -165,7 +170,7 @@ void loop()
 
   }
 
-  long newPosition = myEnc.read();
+  long newPosition = encoder.read();
   if (newPosition != oldPosition) {
     float steps = (newPosition - oldPosition) / ENCODER_CLICK_STEP;
     Serial.println(steps);
@@ -217,7 +222,7 @@ void loop()
       oldPosition = newPosition;
       encode_debounce = millis();
     }
-    Serial.println(newPosition);
+    //Serial.println(newPosition);
   }
 
   if ((eeprom_write_timeout > 0) && (millis() - eeprom_write_timeout > EEPROM_WRITE_TIMEOUT)) {

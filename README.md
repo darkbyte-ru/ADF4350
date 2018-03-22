@@ -14,7 +14,7 @@ In your Arduino sketch, you'll want to include the SPI library in addition to th
     
     void setup()
     {
-      //init ADF4350 with 10MHz reference and tune to 432MHz
+      //init ADF4350 with 10MHz reference and tune to 432.000MHz
       PLL.initialize(432000, 10);
     }
 

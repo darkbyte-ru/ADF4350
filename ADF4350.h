@@ -25,52 +25,51 @@
 
 class ADF4350
 {
-    public: 
-        // Constructor function. 
-        // Creates PLL object, with given SS pin
-        ADF4350(byte);
+	public: 
+		// Constructor function. 
+		// Creates PLL object, with given SS pin
+		ADF4350(byte);
 
-        // Initialize with initial frequency, refClk (defaults to 10Mhz); 
-        void initialize(long, int);
-
-
-        // powers down the PLL/VCO
-        void powerDown(bool);
-        void setRfPower(int);
-        void setAuxPower(int);
-        void auxEnable(bool);
-        void rfEnable(bool);
-        void setInt(int);
-        void setFeedbackType(bool);
-        
-        long getFreq();
-        void setFreq(long);
-
-        void update();
+		// Initialize with initial frequency, refClk (defaults to 10Mhz); 
+		void initialize(long, int);
 
 
-    private:
-        byte _ssPin;
+		// powers down the PLL/VCO
+		void powerDown(bool);
+		void setRfPower(int);
+		void setAuxPower(int);
+		void auxEnable(bool);
+		void rfEnable(bool);
+		void setInt(int);
+		void setFeedbackType(bool);
+		
+		long getFreq();
+		void setFreq(long);
 
-        bool _powerdown, _auxEnabled, _rfEnabled, _feedbackType;
+		//write all register values to device
+		void update();
 
-        unsigned long _phase, _int, _divider, _auxPower, _rfPower;
-        float _refClk, _freq;
 
-        uint32_t _registers[6];
-        double OutputChannelSpacing = 0.01;
+	private:
+		byte _ssPin;
 
-        double FRACF;
-        unsigned int long INTA, MOD, FRAC;
+		bool _powerdown, _auxEnabled, _rfEnabled, _feedbackType;
 
-        // function to write data to register.
-        void setR0();
-        void setR1();
-        void setR2();
-        void setR3();
-        void setR4();
-        void setR5();
-        void WriteRegister32(const uint32_t value);
+		unsigned long _phase, _int, _divider, _auxPower, _rfPower;
+		float _refClk, _freq;
+
+		double OutputChannelSpacing = 0.01;
+
+		unsigned int long INTA, MOD, FRAC;
+
+		// function to write data to register.
+		void setR0();
+		void setR1();
+		void setR2();
+		void setR3();
+		void setR4();
+		void setR5();
+		void WriteRegister32(const uint32_t value);
 
 
 
